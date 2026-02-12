@@ -22,8 +22,10 @@ function EventCard({ image, title, slug, location, date, time }: Props) {
     });
   };
 
+  // Use slug for event detail page, fallback to /events if missing
+  const eventSlug = slug ? `/events/${slug}` : '/events';
   return (
-    <Link href={`/events`} id="event-card" onClick={handleClick}>
+    <Link href={eventSlug} id="event-card" onClick={handleClick}>
       <Image
         src={image}
         alt={title}

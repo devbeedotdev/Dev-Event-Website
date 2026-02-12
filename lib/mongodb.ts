@@ -36,15 +36,16 @@ export async function connectToDatabase(): Promise<Mongoose> {
 
   if (!cached.promise) {
     const opts: ConnectOptions = {
-      // Mongoose 6+ has sensible defaults. We only set options that are
-      // helpful for stability (disable buffering of commands when disconnected).
       bufferCommands: false,
     } as ConnectOptions;
 
-    cached.promise = mongoose
-      .connect(MONGODB_URI!, opts)
+    cached.promise = mongoose.connect(MONGODB_URI!, opts)
       .then((mongooseInstance) => {
         return mongooseInstance;
+      })
+      .catch((err) => {
+        cached.promise = null;
+        throw err;
       });
   }
 
