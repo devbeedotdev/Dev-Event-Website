@@ -2,8 +2,6 @@ import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
 import { events } from "@/lib/constants";
 
-
-
 function HomePage() {
   return (
     <section>
@@ -12,7 +10,6 @@ function HomePage() {
         Event you can&apos;t miss
       </h1>
       <p className="text-center mt-5">
-        {" "}
         Hackathons, Meetups, and Conferences, All in One Place
       </p>
 
