@@ -30,6 +30,7 @@ function EventCard({ image, title, slug, location, date, time }: Props) {
         width={410}
         height={300}
         className="poster"
+        loading="eager"
       />
 
       <div className="flex flex-row gap-2">
@@ -42,7 +43,7 @@ function EventCard({ image, title, slug, location, date, time }: Props) {
           <Image src="/icons/calendar.svg" alt="date" width={14} height={14} />
           <p>{date}</p>
         </div>
-         <div>
+        <div>
           <Image src="/icons/clock.svg" alt="time" width={14} height={14} />
           <p>{time}</p>
         </div>
