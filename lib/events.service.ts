@@ -224,3 +224,21 @@ export async function updateEvent(
 
   return updatedEvent;
 }
+
+
+
+export async function deleteEvent (slug : string) : Promise<boolean>{
+      const events = await readEvents();
+
+  const index = events.findIndex(e => e.slug === slug);
+
+  if (index === -1){
+    return false ;
+  }
+  else {
+    events.splice(index, 1)
+    await writeEvents(events)
+    return true;
+  }
+
+}

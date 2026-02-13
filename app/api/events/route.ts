@@ -1,32 +1,42 @@
+import { createEvent, getAllEvents } from "@/lib/events.service";
+import { EventInput } from "@/types/event.types";
+import { NextResponse } from "next/server";
 
-// import { connectToDatabase } from "@/lib/mongodb";
-// import { NextRequest, NextResponse } from "next/server";
+export async function GET() {
+  try {
+    const allEvent = await getAllEvents();
+    return NextResponse.json(
+      {
+        message: "Events fetched successfully",
+        data: allEvent,
+      },
+      { status: 200 },
+    );
+  } catch (e) {
+    return NextResponse.json(
+      {
+        message: "Failed to fetch events",
+        error: e instanceof Error ? e.message : "Unknown",
+      },
+      { status: 500 },
+    );
+  }
+}
 
-// export async function POST(req: NextRequest) {
-//   try {
-//     await connectToDatabase();
+export async function POST(request: Request) {
+  try {
+    const body: EventInput = await request.json();
 
-//     const formData = await req.formData();
-//     const event = Object.fromEntries(formData.entries());
+    const created = await createEvent(body);
 
-//     const createdEvent = await Event.create(event);
-
-//     return NextResponse.json(
-//       {
-//         message: "Event created successfully",
-//         event: createdEvent,
-//       },
-//       { status: 201 },
-//     );
-//   } catch (e) {
-//     console.error(e);
-
-//     return NextResponse.json(
-//       {
-//         message: "Event Creation Failed",
-//         error: e instanceof Error ? e.message : "Unknown",
-//       },
-//       { status: 500 },
-//     );
-//   }
-// }
+    return NextResponse.json(
+      { message: "Event created successfully", data: created },
+      { status: 201 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: (error as Error).message },
+      { status: 400 },
+    );
+  }
+}
