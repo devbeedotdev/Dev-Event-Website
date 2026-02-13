@@ -1,4 +1,4 @@
-import { Event, EventInput } from "@/types/event.types";
+import { Event, EventInput, EventMode } from "@/types/event.types";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -8,7 +8,7 @@ async function writeEvents(events: Array<Event>): Promise<void> {
   await fs.writeFile(filePath, JSON.stringify(events, null, 2));
 }
 
-async function readEvents(): Promise<Event[]> {
+export async function readEvents(): Promise<Event[]> {
   try {
     const data = await fs.readFile(filePath, "utf-8");
 
@@ -27,7 +27,6 @@ async function readEvents(): Promise<Event[]> {
     throw error;
   }
 }
-
 
 function generateSlug(title: string): string {
   return title
@@ -70,6 +69,11 @@ function validateEventInput(input: EventInput): void {
     if (typeof value !== "string" || value.trim() === "") {
       throw new Error(`${field} is required and must be a non-empty string`);
     }
+  }
+
+  const allowedModes: EventMode[] = ["online", "offline", "hybrid"];
+  if (!allowedModes.includes(input.mode)) {
+    throw new Error(`Invalid mode. Must be one of: ${allowedModes.join(", ")}`);
   }
 
   if (!Array.isArray(input.agenda) || input.agenda.length === 0) {
@@ -150,24 +154,21 @@ export async function getAllEvents(): Promise<Event[]> {
   );
 }
 
-
 export async function getEventBySlug(slug: string): Promise<Event | null> {
   const events = await readEvents();
 
-  const event = events.find(e => e.slug === slug);
+  const event = events.find((e) => e.slug === slug);
 
   return event ?? null;
 }
 
-
-
 export async function updateEvent(
   slug: string,
-  updates: Partial<EventInput>
+  updates: Partial<EventInput>,
 ): Promise<Event | null> {
   const events = await readEvents();
 
-  const index = events.findIndex(e => e.slug === slug);
+  const index = events.findIndex((e) => e.slug === slug);
 
   if (index === -1) {
     return null;
@@ -189,7 +190,7 @@ export async function updateEvent(
     audience: updates.audience ?? existingEvent.audience,
     agenda: updates.agenda ?? existingEvent.agenda,
     organizer: updates.organizer ?? existingEvent.organizer,
-    tags: updates.tags ?? existingEvent.tags
+    tags: updates.tags ?? existingEvent.tags,
   };
 
   // Validate merged data
@@ -202,7 +203,7 @@ export async function updateEvent(
     const baseSlug = generateSlug(updates.title);
     newSlug = ensureUniqueSlug(
       baseSlug,
-      events.filter(e => e.id !== existingEvent.id)
+      events.filter((e) => e.id !== existingEvent.id),
     );
   }
 
@@ -215,7 +216,7 @@ export async function updateEvent(
     slug: newSlug,
     date: normalizedDate,
     time: normalizedTime,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
 
   events[index] = updatedEvent;
@@ -225,20 +226,16 @@ export async function updateEvent(
   return updatedEvent;
 }
 
+export async function deleteEvent(slug: string): Promise<boolean> {
+  const events = await readEvents();
 
+  const index = events.findIndex((e) => e.slug === slug);
 
-export async function deleteEvent (slug : string) : Promise<boolean>{
-      const events = await readEvents();
-
-  const index = events.findIndex(e => e.slug === slug);
-
-  if (index === -1){
-    return false ;
-  }
-  else {
-    events.splice(index, 1)
-    await writeEvents(events)
+  if (index === -1) {
+    return false;
+  } else {
+    events.splice(index, 1);
+    await writeEvents(events);
     return true;
   }
-
 }

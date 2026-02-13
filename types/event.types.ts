@@ -1,5 +1,8 @@
 export type EventMode = "online" | "offline" | "hybrid";
 
+
+
+
 /**
  * Data coming from client when creating an event
  */
