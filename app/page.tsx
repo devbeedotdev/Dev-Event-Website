@@ -1,10 +1,14 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
-import { events } from "@/lib/constants";
 
+import { Event } from "@/types/event.types";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-function HomePage() {
+async function HomePage() {
+  const response = await fetch(`${BASE_URL}/api/events`);
+  const {data : events } = await response.json();
+
   return (
     <section>
       <h1 className="text-center">
@@ -12,7 +16,6 @@ function HomePage() {
         Event you can&apos;t miss
       </h1>
       <p className="text-center mt-5">
-        {" "}
         Hackathons, Meetups, and Conferences, All in One Place
       </p>
 
@@ -20,16 +23,9 @@ function HomePage() {
       <div className="mt-20 space-y-7"></div>
       <h3 className="h-15">Featured Events</h3>
       <ul className="events">
-        {events.map((event) => (
-          <li key={event.image}>
-            <EventCard
-              title={event.title}
-              image={event.image}
-              slug={event.slug}
-              location={event.location}
-              date={event.date}
-              time={event.time}
-            />
+        {events.map((event : Event ) => (
+          <li key={event.slug}>
+            <EventCard {...event} />
           </li>
         ))}
       </ul>
