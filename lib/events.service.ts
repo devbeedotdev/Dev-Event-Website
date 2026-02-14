@@ -48,7 +48,7 @@ function ensureUniqueSlug(baseSlug: string, events: Event[]): string {
   return slug;
 }
 
-function validateEventInput(input: EventInput): void {
+export function validateEventInput(input: EventInput): void {
   const requiredStringFields: (keyof EventInput)[] = [
     "title",
     "description",
@@ -153,6 +153,8 @@ export async function getAllEvents(): Promise<Event[]> {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 }
+
+
 
 export async function getEventBySlug(slug: string): Promise<Event | null> {
   const events = await readEvents();

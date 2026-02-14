@@ -7,6 +7,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatDate(isoDate: string): string {
+  const formattedDate: string = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC", // ensures consistent output for Z (UTC) dates
+  }).format(new Date(isoDate));
+
+  return formattedDate;
+  // Output: April 10, 2025
+}
+
 export function handleApiError(error: any) {
   console.error("API Error:", error); // Log it so you can see it in your terminal
 
